@@ -1,3 +1,4 @@
+import 'package:app_movil/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginFields extends StatefulWidget {
@@ -13,7 +14,6 @@ class _LoginFieldsState extends State<LoginFields> {
   final _passCtrl = TextEditingController();
 
   bool obscure = true;
-  bool loading = false;
   String? _error;
 
   @override
@@ -23,19 +23,26 @@ class _LoginFieldsState extends State<LoginFields> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
+  void _submit() {
     FocusScope.of(context).unfocus();
     final isValid = _formKey.currentState?.validate();
-    if (isValid != true) return;
+    if (isValid != true) {
+      setState(() {
+        _error = 'Corrige los errores del formulario';
+      });
+      return;
+    }
 
     setState(() {
       _error = null;
     });
 
-    // Aquí podrías navegar a la pantalla de bienvenida
-    ScaffoldMessenger.of(
+    //  Navegación a bienvenida
+    Navigator.pushNamed(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Login correcto ✅')));
+      WelcomeScreen.routeName,
+      arguments: _emailCtrl.text.trim(),
+    );
   }
 
   @override
@@ -64,7 +71,7 @@ class _LoginFieldsState extends State<LoginFields> {
           ),
           const SizedBox(height: 16),
 
-          // Campo de contraseña
+          // contraseña
           TextFormField(
             controller: _passCtrl,
             obscureText: obscure,
@@ -92,7 +99,7 @@ class _LoginFieldsState extends State<LoginFields> {
           ),
           const SizedBox(height: 24),
 
-          // Botón de login
+          // Botón login
           ElevatedButton(onPressed: _submit, child: const Text('Ingresar')),
 
           if (_error != null) ...[
